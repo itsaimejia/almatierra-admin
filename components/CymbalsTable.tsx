@@ -49,7 +49,7 @@ export const CymbalsTable = ({ dataTable }: { dataTable: Array<any> }) => {
             <Table sx={{ backgroundColor: 'white', }} captionSide="bottom" striped withColumnBorders>
                 <thead>{ths}</thead>
                 <tbody>{rows}</tbody>
-                <tfoot>{ths}</tfoot>
+
             </Table>
         </Paper>
     );
