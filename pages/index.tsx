@@ -19,8 +19,7 @@ export default function Home() {
   // const totalPagination = Math.round(dataCymbals.length / dataPerPage)
 
   return (<Layout>
-    <LayoutBody>
-      <Title>Menú</Title>
+    <LayoutBody titlePage={'Menú'}>
       <Group position='apart'>
         <Flex
           gap="xs"
