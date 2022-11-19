@@ -29,7 +29,7 @@ export const CymbalsTable = ({ dataTable }: { dataTable: Array<any> }) => {
             <td>{data.categorie}</td>
             <td>{data.description}</td>
             <td>{data.price}</td>
-            <td>active</td>
+            <td></td>
             <td>
                 <Flex
                     gap="md"
