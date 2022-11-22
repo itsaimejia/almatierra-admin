@@ -5,7 +5,7 @@ import { useAuth } from '../context/AuthContext'
 import { useState } from 'react'
 import { useForm } from '@mantine/form'
 import router, { useRouter } from 'next/router'
-import SingUp from './SignUp';
+import SignUp from './SignUp';
 
 
 const useStyles = createStyles(() => ({
@@ -32,7 +32,7 @@ const useStyles = createStyles(() => ({
 }))
 
 
-const SingIn = () => {
+const SignIn = () => {
     const router = useRouter()
     const { user, login, logout } = useAuth()
     const { classes } = useStyles()
@@ -80,7 +80,7 @@ const SingIn = () => {
     }
 
     return <>
-        {register ? (<SingUp />) : (<div className={classes.container}>
+        {register ? (<SignUp />) : (<div className={classes.container}>
             <div className={classes.form}>
                 <form onSubmit={(e) => e.preventDefault()}>
                     <Stack>
@@ -108,10 +108,7 @@ const SingIn = () => {
                         <Button color={'green'} onClick={() => handleLogin()}><Text size="sm" weight={500}>
                             Ingresar
                         </Text></Button>
-                        <Group position="apart" grow mb={5}>
-                            <Button disabled color={'red'} leftIcon={<IconBrandGmail />}>Gmail</Button>
-                            <Button disabled leftIcon={<IconBrandFacebook />}>Facebook</Button>
-                        </Group>
+
 
                         {error.includes('Contraseña') ? (<Notification title="Olvidaste tu contraseña?" onClose={() => setResetPassword(false)}>
                             <Button variant="subtle" radius="xs" size="xs" disabled compact onClick={() => setResetPassword(true)}>
@@ -120,9 +117,9 @@ const SingIn = () => {
                         </Notification>) : null}
 
                         <Divider />
-                        <Button color={'blue'} onClick={() => setRegister(true)}><Text size="sm" weight={500} >
+                        {/* <Button color={'blue'} onClick={() => setRegister(true)}><Text size="sm" weight={500} >
                             Crear nueva cuenta
-                        </Text></Button>
+                        </Text></Button> */}
                     </Stack>
                 </form>
             </div>
@@ -130,4 +127,4 @@ const SingIn = () => {
     </>
 }
 
-export default SingIn
+export default SignIn

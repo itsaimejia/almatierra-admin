@@ -1,10 +1,14 @@
-import { Button, Flex, Paper, Table } from '@mantine/core';
+import { Button, Center, Flex, Paper, Table } from '@mantine/core';
 import { IconUser, IconEdit, IconTrash, IconPower } from '@tabler/icons'
-import React from 'react'
-import { dataCymbals } from '../utils/data';
-import { useState } from 'react';
+import React, { useState } from 'react'
+import CymbalDescriptionModal from './CymbalDescriptionModal';
+import { StatusFlag } from './StatusFlag';
+
 
 export const CymbalsTable = ({ dataTable }: { dataTable: Array<any> }) => {
+
+    const [openedCymbalsDescriptionModal, setOpenedCymbalsDescriptionModal] = useState(false)
+    const [description, setDescription] = useState('')
 
     const ths = (
         <tr>
@@ -21,15 +25,25 @@ export const CymbalsTable = ({ dataTable }: { dataTable: Array<any> }) => {
 
 
 
-    const rows = dataTable.map((data, i) => (
-        <tr key={i}>
-            <td>{i + 1}</td>
+    const rows = dataTable.map((data: any) => (
+        <tr key={data.id}>
+            <td>{data.id}</td>
             <td>{data.name}</td>
             <td>{data.menu}</td>
             <td>{data.categorie}</td>
-            <td>{data.description}</td>
-            <td>{data.price}</td>
-            <td></td>
+            <td>
+                <Center>
+                    <Button sx={{ backgroundColor: '#6096BA' }} radius="md" size="xs"
+                        onClick={() => {
+                            setOpenedCymbalsDescriptionModal(true)
+                            setDescription(data.description)
+                        }}>
+                        Ver descripción
+                    </Button>
+                </Center>
+            </td>
+            <td>${data.price}</td>
+            <td><StatusFlag status={data.status} /></td>
             <td>
                 <Flex
                     gap="md"
@@ -42,7 +56,7 @@ export const CymbalsTable = ({ dataTable }: { dataTable: Array<any> }) => {
                 </Flex>
             </td>
         </tr>
-    ));
+    ))
 
     return (
         <Paper shadow="lg" p="xs">
@@ -51,6 +65,7 @@ export const CymbalsTable = ({ dataTable }: { dataTable: Array<any> }) => {
                 <tbody>{rows}</tbody>
 
             </Table>
+            <CymbalDescriptionModal opened={openedCymbalsDescriptionModal} setOpened={setOpenedCymbalsDescriptionModal} description={description} />
         </Paper>
     );
 

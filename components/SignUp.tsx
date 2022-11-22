@@ -1,10 +1,10 @@
 import { Button, createStyles, Divider, Space, Stack, Center, Title, Group, Text, PasswordInput, TextInput, Alert, ActionIcon, Tooltip, Notification } from '@mantine/core'
 import { useForm } from '@mantine/form';
-import { IconAt, IconLockOpen, IconAlertCircle, IconArrowBackUp } from '@tabler/icons';
+import { IconAt, IconLockOpen, IconAlertCircle, IconArrowBackUp, IconWriting } from '@tabler/icons';
 import { useRouter } from 'next/router';
 import React from 'react'
 import { useAuth } from '../context/AuthContext';
-import SingIn from './SignIn';
+import SignIn from './SignIn';
 import { useState } from 'react';
 
 
@@ -30,7 +30,7 @@ const useStyles = createStyles(() => ({
 
     },
 }));
-const SingUp = () => {
+const SignUp = () => {
 
     const router = useRouter()
     const { createUser } = useAuth()
@@ -40,16 +40,20 @@ const SingUp = () => {
     const form = useForm({
         initialValues: {
             email: '',
-            password: ''
+            password: '',
+            name: ''
         },
 
         validate: {
             email: (value) => ((/^[^@]+@[^@]+\.[a-zA-Z]{2,}$/.test(value) && value.trim().length != 0) ? null : (<Alert icon={<IconAlertCircle size={16} />} title="Ingresa un correo válido" color="red" radius="md" variant="outline">
-                {'Ejemplo: correo@dominio.com'}
+                Ejemplo: correo@dominio.com
             </Alert>)),
             password: (value) => (value.trim().length >= 5 ? null : (<Alert icon={<IconAlertCircle size={16} />} title="Ingresa una contraseña" color="red" radius="md" variant="outline">
                 El campo no puede estar vacio
-            </Alert>))
+            </Alert>)),
+            name: (value) => ((value.trim().length != 0) ? null : (<Alert icon={<IconAlertCircle size={16} />} title="El campo Nombre no debe estar vacio" color="red" radius="md" variant="outline">
+                Ejemplo: Pedro Perez
+            </Alert>)),
         },
     });
 
@@ -73,7 +77,7 @@ const SingUp = () => {
     const { classes } = useStyles()
 
     return <>
-        {backToSignin ? (<SingIn />) : (<div className={classes.container}>
+        {backToSignin ? (<SignIn />) : (<div className={classes.container}>
             <div className={classes.form}>
                 <form onSubmit={(e) => e.preventDefault()}>
                     <Stack>
@@ -89,6 +93,15 @@ const SingUp = () => {
                         </Group>
                         <Divider />
                         <Space />
+                        <TextInput
+                            label='Ingresa tu nombre'
+                            withAsterisk
+                            icon={<IconWriting />}
+                            placeholder="Pedro Perez"
+                            radius="xs"
+                            size="md"
+                            {...form.getInputProps('name')}
+                        />
                         <TextInput
                             label='Ingresa un correo'
                             withAsterisk
@@ -116,4 +129,4 @@ const SingUp = () => {
     </>
 }
 
-export default SingUp
+export default SignUp
