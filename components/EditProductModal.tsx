@@ -81,7 +81,7 @@ export const EditProductModal = ({ opened, setOpened, dataCymbal, reloadData }: 
                     <Input
                         placeholder="Nombre producto"
                         value={name}
-                        onChange={(event) => setName(event.currentTarget.value)}
+                        onChange={(event: any) => setName(event.currentTarget.value)}
 
                     />
                 </Grid.Col>
@@ -89,7 +89,7 @@ export const EditProductModal = ({ opened, setOpened, dataCymbal, reloadData }: 
                     <Input
                         placeholder="Precio"
                         value={price}
-                        onChange={(event) => setPrice(event.currentTarget.value)}
+                        onChange={(event: any) => setPrice(event.currentTarget.value)}
                     />
                 </Grid.Col>
             </Grid>
