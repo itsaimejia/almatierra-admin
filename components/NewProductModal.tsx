@@ -110,7 +110,6 @@ export const NewProductModal = ({ opened, setOpened, dataCymbals, reloadData }: 
                         placeholder="Nombre producto"
                         value={name}
                         onChange={(event: any) => setName(event.currentTarget.value)}
-
                     />
                 </Grid.Col>
                 <Grid.Col span={4}>
@@ -123,7 +122,7 @@ export const NewProductModal = ({ opened, setOpened, dataCymbals, reloadData }: 
             </Grid>
             <Textarea placeholder="Descripción"
                 value={description}
-                onChange={(event) => setDescription(event.currentTarget.value)} />
+                onChange={(event: any) => setDescription(event.currentTarget.value)} />
 
             {showErrorMessage ? (<Alert icon={<IconAlertCircle size={16} />} title="Faltan datos" color="red" radius="md" variant="outline">
                 Todos los campos deben ser llenados (Descripción es opcional)
