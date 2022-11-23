@@ -18,9 +18,6 @@ export const FormBaseModal = ({ children, opened, title, closeModal }: NewProduc
                 radius={10}
                 padding={0}
                 withCloseButton={false}
-                transition="fade"
-                transitionDuration={500}
-                transitionTimingFunction="ease"
                 centered
                 size="sm"
                 opened={opened}

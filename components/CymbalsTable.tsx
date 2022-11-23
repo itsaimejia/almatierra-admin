@@ -1,14 +1,20 @@
-import { Button, Center, Flex, Paper, Table } from '@mantine/core';
+import { ActionIcon, Button, Center, Flex, Paper, Table } from '@mantine/core';
 import { IconUser, IconEdit, IconTrash, IconPower } from '@tabler/icons'
+import { reload } from 'firebase/auth';
 import React, { useState } from 'react'
+import { turnOnOffProduct } from '../pages/api/cymbals';
 import CymbalDescriptionModal from './CymbalDescriptionModal';
+import { EditProductModal } from './EditProductModal';
 import { StatusFlag } from './StatusFlag';
 
 
-export const CymbalsTable = ({ dataTable }: { dataTable: Array<any> }) => {
+
+export const CymbalsTable = ({ dataTable, reloadData }: { dataTable: any, reloadData: any }) => {
 
     const [openedCymbalsDescriptionModal, setOpenedCymbalsDescriptionModal] = useState(false)
+    const [openedEditProductModal, setOpenedEditProductModal] = useState(false)
     const [description, setDescription] = useState('')
+    const [currentDataCymbal, setCurrentDataCymbal] = useState(Object)
 
     const ths = (
         <tr>
@@ -21,10 +27,7 @@ export const CymbalsTable = ({ dataTable }: { dataTable: Array<any> }) => {
             <th>ESTADO</th>
             <th>ACCIONES</th>
         </tr>
-    );
-
-
-
+    )
     const rows = dataTable.map((data: any) => (
         <tr key={data.id}>
             <td>{data.id}</td>
@@ -50,9 +53,16 @@ export const CymbalsTable = ({ dataTable }: { dataTable: Array<any> }) => {
                     justify="center"
                     align="center"
                     direction="row">
-                    <IconEdit size={19} />
+                    <ActionIcon onClick={() => {
+                        setOpenedEditProductModal(true)
+                        setCurrentDataCymbal(data)
+                    }}>
+                        <IconEdit size={19} color='black' />
+                    </ActionIcon>
                     <IconTrash size={19} />
-                    <IconPower size={19} />
+                    {/* <ActionIcon onClick={() => turnOnOffProduct(data.id, data.status, reloadData)}>
+                        <IconPower size={19} color='black' />
+                    </ActionIcon> */}
                 </Flex>
             </td>
         </tr>
@@ -66,6 +76,7 @@ export const CymbalsTable = ({ dataTable }: { dataTable: Array<any> }) => {
 
             </Table>
             <CymbalDescriptionModal opened={openedCymbalsDescriptionModal} setOpened={setOpenedCymbalsDescriptionModal} description={description} />
+            <EditProductModal opened={openedEditProductModal} setOpened={setOpenedEditProductModal} dataCymbal={currentDataCymbal} reloadData={reloadData} />
         </Paper>
     );
 

@@ -2,23 +2,18 @@ import { ActionIcon, Alert, Box, Button, Flex, Grid, Group, Input, Modal, Native
 import { IconAlertCircle, IconCheck, IconX } from '@tabler/icons'
 import React, { useEffect, useState } from 'react'
 import { getFirst3Letter, getFirstLetterEachWord, isNotEmpty, normilizeWord } from '../static/onStrings'
-import { addProduct } from '../pages/api/cymbals';
+import { addProduct, editProduct } from '../pages/api/cymbals';
 import { FormBaseModal } from './FormBaseModal';
 
 
 interface NewProductModalProps {
     opened: boolean
     setOpened: any
-    dataCymbals: Array<any>
+    dataCymbal: any
     reloadData(): void
 }
-export const NewProductModal = ({ opened, setOpened, dataCymbals, reloadData }: NewProductModalProps) => {
-    const [dataMenus, setDataMenus] = useState([])
-    const [titlesMenus, setTitleMenus] = useState([])
-    const [dataCategories, setDataCategories] = useState([])
-    const [selectTitleMenu, setSelectTitleMenu] = useState('')
-    const [selectCategorie, setSelectCategorie] = useState('')
-    const [disabledCategories, setDisabledCategories] = useState(true)
+export const EditProductModal = ({ opened, setOpened, dataCymbal, reloadData }: NewProductModalProps) => {
+
     const [showErrorMessage, setShowErrorMessage] = useState(false)
     const [showNotification, setShowNotification] = useState(false)
     const [loading, setLoading] = useState(false)
@@ -27,50 +22,30 @@ export const NewProductModal = ({ opened, setOpened, dataCymbals, reloadData }: 
     const [price, setPrice] = useState('')
     const [description, setDescription] = useState('')
 
-    useEffect(() => {
-        const fetchMenus = async () => {
-            const res = await fetch(`/api/menus`)
-            const data = await res.json()
-            const titleMenusList = data.map((d: any) => d.title)
-            setDataMenus(data ?? [])
-            setTitleMenus(titleMenusList)
-        }
-        fetchMenus()
-    }, [])
-    const fillCategories = (title: string) => {
-        dataMenus.map((d: any) => {
-            if (normilizeWord(d.title) === normilizeWord(title))
-                setDataCategories(d.categories)
-        })
-        setDisabledCategories(false)
-    }
+
 
     const closeModal = () => {
         setOpened(false)
-        setSelectTitleMenu('')
-        setSelectCategorie('')
-        setName('')
-        setPrice('')
-        setDescription('')
-        setDisabledCategories(true)
         setShowErrorMessage(false)
     }
 
-    const handleNewProduct = async () => {
-        const valid = isNotEmpty(selectTitleMenu) && isNotEmpty(selectCategorie)
-            && isNotEmpty(name) && isNotEmpty(price)
+    useEffect(() => {
+        setName(dataCymbal.name)
+        setPrice(dataCymbal.price)
+        setDescription(dataCymbal.description)
+    }, [dataCymbal.description, dataCymbal.name, dataCymbal.price])
+
+    const handleEditProduct = async () => {
+        const valid = isNotEmpty(name) && isNotEmpty(price)
         setShowErrorMessage(!valid)
         if (valid) {
             setShowNotification(true)
             setLoading(true)
-            let lastIdNumber: any = dataCymbals.map((d: any) => parseInt(d.id.slice(-4))).sort((a, b) => a - b).at(-1)
-            const idNumber = parseInt(lastIdNumber) + 1
-            const formatNumber = (n: any) => n < 10 ? '000' + n : n < 100 ? '00' + n : n < 1000 ? '0' + n : n
-            const currentId = getFirst3Letter(selectTitleMenu) + getFirstLetterEachWord(selectCategorie) + formatNumber(idNumber)
-            addProduct({
-                id: currentId,
-                menu: selectTitleMenu,
-                categorie: selectCategorie,
+
+            editProduct({
+                id: dataCymbal.id,
+                menu: dataCymbal.menu,
+                categorie: dataCymbal.categorie,
                 description: description,
                 name: name,
                 price: price
@@ -85,23 +60,20 @@ export const NewProductModal = ({ opened, setOpened, dataCymbals, reloadData }: 
     }
     return (
         <FormBaseModal title={'Agregar nuevo producto'} opened={opened} closeModal={closeModal} >
+            <Flex
+                justify="center"
+                align="center"
+            >
+                <Text>Editando: {dataCymbal.id}</Text>
+            </Flex>
             <Group grow>
-                <Select
-                    placeholder='Menú'
-                    value={selectTitleMenu}
-                    onChange={(value: any) => {
-                        setSelectTitleMenu(value)
-                        setSelectCategorie('')
-                        fillCategories(value)
-                    }}
-                    data={titlesMenus}
+                <Input
+                    value={dataCymbal.menu}
+                    disabled
                 />
-                <Select
-                    placeholder='Categoría'
-                    value={selectCategorie}
-                    onChange={(value: any) => setSelectCategorie(value)}
-                    data={dataCategories}
-                    disabled={disabledCategories}
+                <Input
+                    value={dataCymbal.categorie}
+                    disabled
                 />
             </Group>
             <Grid >
@@ -129,7 +101,7 @@ export const NewProductModal = ({ opened, setOpened, dataCymbals, reloadData }: 
                 Todos los campos deben ser llenados (Descripción es opcional)
             </Alert>) : null}
             {showNotification ? (<Notification loading={loading} icon={<IconCheck size={18} />} color="teal" title="Guardar">
-                {loading ? 'Guardando registro' : 'Registro guardado'}
+                {loading ? 'Guardando cambios' : 'Cambios guardados'}
             </Notification>) : null}
             <Flex
                 justify="center"
@@ -144,7 +116,7 @@ export const NewProductModal = ({ opened, setOpened, dataCymbals, reloadData }: 
                             },
                         },
                     })}
-                    onClick={() => handleNewProduct()}>Guardar</Button>
+                    onClick={() => handleEditProduct()}>Guardar cambios</Button>
             </Flex>
         </FormBaseModal>
 

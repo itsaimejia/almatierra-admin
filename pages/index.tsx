@@ -1,74 +1,34 @@
-import { Button, Flex, Group } from '@mantine/core'
-import { IconPlus } from '@tabler/icons'
-import { useEffect, useState } from 'react'
-import { CymbalsTable } from '../components/CymbalsTable'
+import { getDocs, collection } from 'firebase/firestore'
+import { useState } from 'react'
 import { Layout } from '../components/Layout'
 import { LayoutBody } from '../components/LayoutBody'
-import { NewProductModal } from '../components/NewProductModal'
-import { getFirstLetterEachWord } from '../static/onStrings';
+import { TableSort } from '../components/TableSortTest'
+import { db } from '../config/firebase'
 
-
-
-
-export default function Home() {
-  // const [currentPage, setCurrentPage] = useState(1)
-  // const [dataPerPage, setDataPerPage] = useState(10)
-
-  // const indexOfLastDatum = currentPage * dataPerPage
-  // const indexOfFirstDatum = indexOfLastDatum - dataPerPage
-  // const currentData = dataCymbals.slice(indexOfFirstDatum, indexOfLastDatum)
-  // const totalPagination = Math.round(dataCymbals.length / dataPerPage)
-  const [openedNewProductModal, setOpenedNewProductModal] = useState(false)
-  const [dataCymbals, setDataCymbals] = useState([])
-
-  useEffect(() => {
-    const fetchCymbals = async () => {
-      const res = await fetch(`/api/cymbals`)
-      const data = await res.json()
-      setDataCymbals(data ?? [])
-    }
-    fetchCymbals()
-  }, [])
-
+export default function Home({ dataCymbals }: { dataCymbals: any }) {
   return (<Layout>
     <LayoutBody titlePage={'Menú'}>
-      <NewProductModal opened={openedNewProductModal} setOpened={setOpenedNewProductModal} dataCymbals={dataCymbals} />
-      <Group position='apart'>
-        <Flex
-          gap="xs"
-          justify="flex-start"
-          align="flex-start"
-          direction="row"
-          wrap="nowrap"
-        >
-          <Button
-            styles={(theme) => ({
-              root: {
-                backgroundColor: '#47A025',
-                color: 'black',
-                '&:hover': {
-                  backgroundColor: theme.fn.darken('#47A025', 0.05),
-                },
-              },
-            })}
-            leftIcon={<IconPlus size={17} />}
-            onClick={() => setOpenedNewProductModal(true)}>
-            Nuevo producto</Button>
-          <Button >Buscar por nombre</Button>
-          <Button>Buscar por menu</Button>
-        </Flex>
-        <Button>Editar menus</Button>
-      </Group>
-      {/* <NumberInput sx={{ width: 100 }}
-        value={dataPerPage}
-        stepHoldDelay={500}
-        stepHoldInterval={100}
-        onChange={(val: any) => setDataPerPage(val)}
-      /> */}
-      <CymbalsTable dataTable={dataCymbals} />
-      {/* <Pagination page={currentPage} onChange={setCurrentPage} total={totalPagination} /> */}
-
+      <TableSort data={dataCymbals} />
     </LayoutBody>
   </Layout>
   )
+}
+
+export async function getStaticProps() {
+  const querySnapshot = await getDocs(collection(db, "cymbals"))
+  let cymbals: any = []
+  querySnapshot.forEach((doc) => {
+    const newObject = {
+      id: doc.id,
+      menu: doc.data().menu,
+      categorie: doc.data().categorie,
+      name: doc.data().name,
+      description: doc.data().description,
+      price: doc.data().price,
+      status: doc.data().status
+    }
+    cymbals.push(newObject)
+  })
+  const sortCymbals = cymbals.sort((a: any, b: any) => parseInt(b.id.slice(-4)) - parseInt(a.id.slice(-4)))
+  return { props: { dataCymbals: sortCymbals } }
 }

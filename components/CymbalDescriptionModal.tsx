@@ -9,9 +9,6 @@ interface CymbalsDescriptionProps {
 const CymbalDescriptionModal = ({ opened, setOpened, description }: CymbalsDescriptionProps) => {
     return (
         <Modal
-            transition="fade"
-            transitionDuration={600}
-            transitionTimingFunction="ease"
             withCloseButton
             centered
             size="sm"
