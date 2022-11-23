@@ -25,15 +25,10 @@ export default function Images() {
                             data={['React', 'Vue', 'Angular', 'Svelte']}
                         />
                     </Stack>
-
                 </Flex>
-                <Flex
-                    justify="center"
-                    align="center"
-                >
+                <Flex justify="center" align="center">
                     <Button sx={{ width: 250, alignContent: 'center' }}>Subir imagen</Button>
                 </Flex>
-
             </LayoutBody>
         </Layout>
     )

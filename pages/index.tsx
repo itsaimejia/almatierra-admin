@@ -1,48 +1,34 @@
-import { Button, Flex, Group, NumberInput, Pagination, Title } from '@mantine/core'
-import Head from 'next/head'
-import Image from 'next/image'
+import { getDocs, collection } from 'firebase/firestore'
 import { useState } from 'react'
-import { CymbalsTable } from '../components/CymbalsTable'
 import { Layout } from '../components/Layout'
 import { LayoutBody } from '../components/LayoutBody'
-import styles from '../styles/Home.module.css'
-import { dataCymbals } from '../utils/data';
+import { TableSortCymbals } from '../components/TableSortCymbals'
+import { db } from '../config/firebase'
 
-
-export default function Home() {
-  // const [currentPage, setCurrentPage] = useState(1)
-  // const [dataPerPage, setDataPerPage] = useState(10)
-
-  // const indexOfLastDatum = currentPage * dataPerPage
-  // const indexOfFirstDatum = indexOfLastDatum - dataPerPage
-  // const currentData = dataCymbals.slice(indexOfFirstDatum, indexOfLastDatum)
-  // const totalPagination = Math.round(dataCymbals.length / dataPerPage)
-
+export default function Home({ dataCymbals }: { dataCymbals: any }) {
   return (<Layout>
     <LayoutBody titlePage={'Menú'}>
-      <Group position='apart'>
-        <Flex
-          gap="xs"
-          justify="flex-start"
-          align="flex-start"
-          direction="row"
-          wrap="nowrap"
-        >
-          <Button>Nuevo producto</Button>
-          <Button>Buscar por nombre</Button>
-          <Button>Buscar por menu</Button>
-        </Flex>
-        <Button>Editar menus</Button>
-      </Group>
-      {/* <NumberInput sx={{ width: 100 }}
-        value={dataPerPage}
-        stepHoldDelay={500}
-        stepHoldInterval={100}
-        onChange={(val: any) => setDataPerPage(val)}
-      /> */}
-      <CymbalsTable dataTable={dataCymbals} />
-      {/* <Pagination page={currentPage} onChange={setCurrentPage} total={totalPagination} /> */}
+      <TableSortCymbals data={dataCymbals} />
     </LayoutBody>
   </Layout>
   )
+}
+
+export async function getStaticProps() {
+  const querySnapshot = await getDocs(collection(db, "cymbals"))
+  let cymbals: any = []
+  querySnapshot.forEach((doc) => {
+    const newObject = {
+      id: doc.id,
+      menu: doc.data().menu,
+      categorie: doc.data().categorie,
+      name: doc.data().name,
+      description: doc.data().description,
+      price: doc.data().price,
+      status: doc.data().status
+    }
+    cymbals.push(newObject)
+  })
+  const sortCymbals = cymbals.sort((a: any, b: any) => parseInt(b.id.slice(-4)) - parseInt(a.id.slice(-4)))
+  return { props: { dataCymbals: sortCymbals } }
 }
