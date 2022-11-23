@@ -27,6 +27,7 @@ export const EditProductModal = ({ opened, setOpened, dataCymbal, reloadData }: 
     const closeModal = () => {
         setOpened(false)
         setShowErrorMessage(false)
+        setShowNotification(false)
     }
 
     useEffect(() => {
@@ -51,15 +52,15 @@ export const EditProductModal = ({ opened, setOpened, dataCymbal, reloadData }: 
                 price: price
             }).then((v) => {
                 setLoading(false)
-                setTimeout(() => setShowNotification(false), 5000)
-                closeModal()
+                setTimeout(() => closeModal(), 500)
+
                 reloadData()
             })
 
         }
     }
     return (
-        <FormBaseModal title={'Agregar nuevo producto'} opened={opened} closeModal={closeModal} >
+        <FormBaseModal title={'Editar producto'} opened={opened} closeModal={closeModal} >
             <Flex
                 justify="center"
                 align="center"

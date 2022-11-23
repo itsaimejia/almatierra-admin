@@ -19,6 +19,7 @@ import CymbalDescriptionModal from './CymbalDescriptionModal';
 import { EditProductModal } from './EditProductModal';
 import { getDocs, collection } from 'firebase/firestore';
 import { db } from '../config/firebase';
+import { DeleteProductModal } from './DeleteProductModal';
 
 
 interface ProductProps {
@@ -48,14 +49,15 @@ function sortData(data: ProductProps[], payload: { search: string }) {
     );
 }
 
-export function TableSort({ data, }: TableSortProps) {
+export function TableSortCymbals({ data }: TableSortProps) {
     const [search, setSearch] = useState('');
     const [sortedData, setSortedData] = useState(data);
     const [openedCymbalsDescriptionModal, setOpenedCymbalsDescriptionModal] = useState(false)
     const [openedEditProductModal, setOpenedEditProductModal] = useState(false)
+    const [openedNewProductModal, setOpenedNewProductModal] = useState(false)
+    const [openedDeleteProductModal, setOpenedDeleteProductModal] = useState(false)
     const [description, setDescription] = useState('')
     const [currentDataCymbal, setCurrentDataCymbal] = useState(Object)
-    const [openedNewProductModal, setOpenedNewProductModal] = useState(false)
     const [currentDataCymbals, setCurrentDataCymbals] = useState(data)
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -80,6 +82,7 @@ export function TableSort({ data, }: TableSortProps) {
         })
         const sortCymbals = cymbals.sort((a: any, b: any) => parseInt(b.id.slice(-4)) - parseInt(a.id.slice(-4)))
         setSortedData(sortData(sortCymbals, { search }))
+        setCurrentDataCymbals(sortCymbals)
     }
     const ths = (
         <tr>
@@ -125,7 +128,13 @@ export function TableSort({ data, }: TableSortProps) {
                     }}>
                         <IconEdit size={19} color='black' />
                     </ActionIcon>
-                    <IconTrash size={19} />
+                    <ActionIcon onClick={() => {
+                        setOpenedDeleteProductModal(true)
+                        setCurrentDataCymbal(data)
+                    }}>
+                        <IconTrash size={19} color='black' />
+                    </ActionIcon>
+
                     <ActionIcon onClick={() => {
                         turnOnOffProduct(data.id, data.status).then(() => {
                             reloadDataCymbals()
@@ -179,14 +188,12 @@ export function TableSort({ data, }: TableSortProps) {
                         {ths}
                     </thead>
                     <tbody>
-                        {rows.length > 0 ? (
+                        {rows.length > 0 || data.length > 0 ? (
                             rows
                         ) : (
                             <tr>
-                                <td colSpan={Object.keys(data[0]).length}>
-                                    <Text weight={500} align="center">
-                                        Nothing found
-                                    </Text>
+                                <td colSpan={8}>
+
                                 </td>
                             </tr>
                         )}
@@ -195,6 +202,7 @@ export function TableSort({ data, }: TableSortProps) {
                 </Table>
                 <CymbalDescriptionModal opened={openedCymbalsDescriptionModal} setOpened={setOpenedCymbalsDescriptionModal} description={description} />
                 <EditProductModal opened={openedEditProductModal} setOpened={setOpenedEditProductModal} dataCymbal={currentDataCymbal} reloadData={reloadDataCymbals} />
+                <DeleteProductModal opened={openedDeleteProductModal} setOpened={setOpenedDeleteProductModal} dataCymbal={currentDataCymbal} reloadData={reloadDataCymbals} />
             </Paper>
         </>
     );

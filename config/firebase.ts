@@ -3,12 +3,13 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBvOInu0CN_rphNIxY_9jeWnBzNmlOqW7A",
-  authDomain: "almatierra-d82ff.firebaseapp.com",
-  projectId: "almatierra-d82ff",
-  storageBucket: "almatierra-d82ff.appspot.com",
-  messagingSenderId: "215494995286",
-  appId: "1:215494995286:web:6877e2fd5348209eb0baf7"
+  apiKey: "AIzaSyD0K-eGKF_nWMInHhJInbqFWCsiZgBWeaQ",
+  authDomain: "food-4eb80.firebaseapp.com",
+  databaseURL: "https://food-4eb80-default-rtdb.firebaseio.com",
+  projectId: "food-4eb80",
+  storageBucket: "food-4eb80.appspot.com",
+  messagingSenderId: "761828869602",
+  appId: "1:761828869602:web:bbef2940978c7ce9c065bb"
 }
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();

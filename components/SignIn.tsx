@@ -1,10 +1,10 @@
-import { Button, Center, createStyles, Divider, Space, Stack, Title, TextInput, Group, Text, Anchor, PasswordInput, Alert, Notification } from '@mantine/core'
-import { IconAt, IconLockOpen, IconBrandGmail, IconBrandFacebook, IconAlertCircle } from '@tabler/icons';
+import { Button, Center, createStyles, Divider, Space, Stack, Title, TextInput, Text, PasswordInput, Alert, Notification } from '@mantine/core'
+import { IconAt, IconLockOpen, IconAlertCircle } from '@tabler/icons';
 import React from 'react'
 import { useAuth } from '../context/AuthContext'
 import { useState } from 'react'
 import { useForm } from '@mantine/form'
-import router, { useRouter } from 'next/router'
+import { useRouter } from 'next/router'
 import SignUp from './SignUp';
 
 
@@ -34,7 +34,7 @@ const useStyles = createStyles(() => ({
 
 const SignIn = () => {
     const router = useRouter()
-    const { user, login, logout } = useAuth()
+    const { login } = useAuth()
     const { classes } = useStyles()
     const [register, setRegister] = useState(false)
     const [error, setError] = useState('')
@@ -44,7 +44,6 @@ const SignIn = () => {
             email: '',
             password: ''
         },
-
         validate: {
             email: (value) => ((/^[^@]+@[^@]+\.[a-zA-Z]{2,}$/.test(value) && value.trim().length != 0) ? null : (<Alert icon={<IconAlertCircle size={16} />} title="Ingresa un correo válido" color="red" radius="md" variant="outline">
                 {'Ejemplo: correo@dominio.com'}
@@ -53,14 +52,13 @@ const SignIn = () => {
                 Debe incluir mínimo 5 carácteres
             </Alert>))
         },
-    });
+    })
 
     const keyDownHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.code === "Enter" || event.code === "NumpadEnter") {
             handleLogin()
         }
     }
-
     const handleLogin = async () => {
         if (!form.validate().hasErrors) {
             await login(form.values.email.toLowerCase(), form.values.password).then((result: any) => {
@@ -108,18 +106,12 @@ const SignIn = () => {
                         <Button color={'green'} onClick={() => handleLogin()}><Text size="sm" weight={500}>
                             Ingresar
                         </Text></Button>
-
-
                         {error.includes('Contraseña') ? (<Notification title="Olvidaste tu contraseña?" onClose={() => setResetPassword(false)}>
                             <Button variant="subtle" radius="xs" size="xs" disabled compact onClick={() => setResetPassword(true)}>
                                 Recuperar contraseña
                             </Button>
                         </Notification>) : null}
-
                         <Divider />
-                        {/* <Button color={'blue'} onClick={() => setRegister(true)}><Text size="sm" weight={500} >
-                            Crear nueva cuenta
-                        </Text></Button> */}
                     </Stack>
                 </form>
             </div>

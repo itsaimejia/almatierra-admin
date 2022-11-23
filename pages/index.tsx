@@ -2,13 +2,13 @@ import { getDocs, collection } from 'firebase/firestore'
 import { useState } from 'react'
 import { Layout } from '../components/Layout'
 import { LayoutBody } from '../components/LayoutBody'
-import { TableSort } from '../components/TableSortTest'
+import { TableSortCymbals } from '../components/TableSortCymbals'
 import { db } from '../config/firebase'
 
 export default function Home({ dataCymbals }: { dataCymbals: any }) {
   return (<Layout>
     <LayoutBody titlePage={'Menú'}>
-      <TableSort data={dataCymbals} />
+      <TableSortCymbals data={dataCymbals} />
     </LayoutBody>
   </Layout>
   )

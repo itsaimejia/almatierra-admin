@@ -54,6 +54,7 @@ export const NewProductModal = ({ opened, setOpened, dataCymbals, reloadData }: 
         setDescription('')
         setDisabledCategories(true)
         setShowErrorMessage(false)
+        setShowNotification(false)
     }
 
     const handleNewProduct = async () => {
@@ -63,8 +64,13 @@ export const NewProductModal = ({ opened, setOpened, dataCymbals, reloadData }: 
         if (valid) {
             setShowNotification(true)
             setLoading(true)
-            let lastIdNumber: any = dataCymbals.map((d: any) => parseInt(d.id.slice(-4))).sort((a, b) => a - b).at(-1)
-            const idNumber = parseInt(lastIdNumber) + 1
+            let idNumber
+            if (dataCymbals.length > 0) {
+                let lastIdNumber: any = dataCymbals.map((d: any) => parseInt(d.id.slice(-4))).sort((a, b) => a - b).at(-1)
+                idNumber = parseInt(lastIdNumber) + 1
+            } else {
+                idNumber = dataCymbals.length
+            }
             const formatNumber = (n: any) => n < 10 ? '000' + n : n < 100 ? '00' + n : n < 1000 ? '0' + n : n
             const currentId = getFirst3Letter(selectTitleMenu) + getFirstLetterEachWord(selectCategorie) + formatNumber(idNumber)
             addProduct({
@@ -76,8 +82,7 @@ export const NewProductModal = ({ opened, setOpened, dataCymbals, reloadData }: 
                 price: price
             }).then((v) => {
                 setLoading(false)
-                setTimeout(() => setShowNotification(false), 5000)
-                closeModal()
+                setTimeout(() => closeModal(), 500)
                 reloadData()
             })
 
