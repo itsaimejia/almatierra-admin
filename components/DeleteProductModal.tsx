@@ -86,9 +86,9 @@ export const DeleteProductModal = ({ opened, setOpened, dataCymbal, reloadData }
                 <Button size="xs"
                     styles={(theme) => ({
                         root: {
-                            backgroundColor: 'red',
+                            backgroundColor: '#B6151B',
                             '&:hover': {
-                                backgroundColor: theme.fn.darken('#47A025', 0.05),
+                                backgroundColor: theme.fn.darken('#B6151B', 0.05),
                             },
                         },
                     })}

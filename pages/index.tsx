@@ -6,6 +6,7 @@ import { TableSortCymbals } from '../components/TableSortCymbals'
 import { db } from '../config/firebase'
 
 export default function Home({ dataCymbals }: { dataCymbals: any }) {
+  console.log('render')
   return (<Layout>
     <LayoutBody titlePage={'Menú'}>
       <TableSortCymbals data={dataCymbals} />
