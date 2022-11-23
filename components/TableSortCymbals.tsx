@@ -13,7 +13,7 @@ import {
 import { keys } from '@mantine/utils';
 import { IconSearch, IconEdit, IconPower, IconTrash, IconPlus } from '@tabler/icons';
 import { StatusFlag } from './StatusFlag';
-import { turnOnOffProduct } from '../pages/api/cymbals';
+import { addAll, turnOnOffProduct } from '../pages/api/cymbals';
 import { NewProductModal } from './NewProductModal';
 import CymbalDescriptionModal from './CymbalDescriptionModal';
 import { EditProductModal } from './EditProductModal';
@@ -172,15 +172,15 @@ export function TableSortCymbals({ data }: TableSortProps) {
                         onClick={() => setOpenedNewProductModal(true)}>
                         Nuevo producto</Button>
                     <TextInput
-                        sx={{ width: 270 }}
-                        placeholder="Buscar por ID, Nombre, Categoría"
+                        sx={{ width: 300 }}
+                        placeholder="Buscar por ID, Nombre, Menú, Categoría"
                         mb="md"
                         icon={<IconSearch size={14} stroke={1.5} />}
                         value={search}
                         onChange={handleSearchChange}
                     />
                 </Flex>
-                <Button disabled>Editar menus</Button>
+                <Button disabled >Editar menus</Button>
             </Group>
             <Paper shadow="lg" p="xs">
                 <Table sx={{ backgroundColor: 'white', }} captionSide="bottom" striped withColumnBorders>
