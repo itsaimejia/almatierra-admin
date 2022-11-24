@@ -1,4 +1,4 @@
-import { ActionIcon, Alert, Box, Button, Flex, Grid, Group, Input, Modal, NativeSelect, Select, Stack, Text, Textarea, Notification } from '@mantine/core'
+import { ActionIcon, Alert, Box, Button, Flex, Grid, Group, Input, Modal, NativeSelect, Select, Stack, Text, Textarea, Notification, NumberInput } from '@mantine/core'
 import { IconAlertCircle, IconCheck, IconX } from '@tabler/icons'
 import React, { useEffect, useState } from 'react'
 import { getFirst3Letter, getFirstLetterEachWord, isNotEmpty, normilizeWord } from '../static/onStrings'
@@ -24,7 +24,7 @@ export const NewProductModal = ({ opened, setOpened, dataCymbals, reloadData }: 
     const [loading, setLoading] = useState(false)
 
     const [name, setName] = useState('')
-    const [price, setPrice] = useState('')
+    const [price, setPrice] = useState(0)
     const [description, setDescription] = useState('')
 
     useEffect(() => {
@@ -50,7 +50,7 @@ export const NewProductModal = ({ opened, setOpened, dataCymbals, reloadData }: 
         setSelectTitleMenu('')
         setSelectCategorie('')
         setName('')
-        setPrice('')
+        setPrice(0)
         setDescription('')
         setDisabledCategories(true)
         setShowErrorMessage(false)
@@ -59,7 +59,7 @@ export const NewProductModal = ({ opened, setOpened, dataCymbals, reloadData }: 
 
     const handleNewProduct = async () => {
         const valid = isNotEmpty(selectTitleMenu) && isNotEmpty(selectCategorie)
-            && isNotEmpty(name) && isNotEmpty(price)
+            && isNotEmpty(name) && price != 0
         setShowErrorMessage(!valid)
         if (valid) {
             setShowNotification(true)
@@ -85,7 +85,6 @@ export const NewProductModal = ({ opened, setOpened, dataCymbals, reloadData }: 
                 setTimeout(() => closeModal(), 500)
                 reloadData()
             })
-
         }
     }
     return (
@@ -118,10 +117,12 @@ export const NewProductModal = ({ opened, setOpened, dataCymbals, reloadData }: 
                     />
                 </Grid.Col>
                 <Grid.Col span={4}>
-                    <Input
+                    <NumberInput
                         placeholder="Precio"
+                        hideControls
+                        min={0}
                         value={price}
-                        onChange={(event: any) => setPrice(event.currentTarget.value)}
+                        onChange={(val: any) => setPrice(val)}
                     />
                 </Grid.Col>
             </Grid>

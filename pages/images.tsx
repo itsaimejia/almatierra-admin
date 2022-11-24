@@ -6,8 +6,8 @@ import { LayoutBody } from '../components/LayoutBody'
 import { Text, Image, SimpleGrid } from '@mantine/core';
 import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from '@mantine/dropzone';
 import { _BackgroundImage } from '@mantine/core/lib/BackgroundImage/BackgroundImage';
-import { IconPlus } from '@tabler/icons';
-import { normilizeWord } from '../static/onStrings';
+import { IconPlus, IconUpload } from '@tabler/icons';
+import { normilizeWord, isNotEmpty } from '../static/onStrings';
 
 export default function Images() {
     const [files, setFiles] = useState<FileWithPath[]>([]);
@@ -18,7 +18,7 @@ export default function Images() {
     const [selectSection, setSelectSection] = useState('')
     const [disabledCategories, setDisabledCategories] = useState(true)
     const [selectCategorie, setSelectCategorie] = useState('')
-    const [gbColor, setBgColor] = useState('#484646');
+    const [bgColor, setBgColor] = useState('#484646');
 
 
     useEffect(() => {
@@ -46,12 +46,26 @@ export default function Images() {
                 alt=''
                 key={index}
                 src={imageUrl}
+                height={600}
                 imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
             />
         );
     })
 
-    console.log(previews)
+    const handleUpload = () => {
+        const fileImage = files[0]
+        if (fileImage != undefined) {
+
+            if (selectSection === 'Banner') {
+                console.log(selectSection, fileImage, bgColor)
+            } else if (selectSection === 'Menu') {
+                const valid = isNotEmpty(selectTitleMenu) && isNotEmpty(selectCategorie)
+                if (valid) {
+
+                }
+            }
+        }
+    }
     return (
         <Layout>
             <LayoutBody titlePage='Imagenes'>
@@ -77,14 +91,14 @@ export default function Images() {
                 </Dropzone>
                 <Flex
                     mih={50}
-                    bg="grey"
+                    bg={bgColor}
                     gap="xs"
                     justify="flex-start"
                     align="flex-start"
                     direction="row"
                     wrap="nowrap"
                 >
-                    <Box sx={{ backgroundColor: 'grey', width: '80%', objectFit: 'contain' }}>
+                    <Box sx={{ backgroundColor: bgColor, width: '80%', objectFit: 'contain' }}>
                         <Center>
                             <SimpleGrid
                                 cols={1}
@@ -96,12 +110,13 @@ export default function Images() {
                         </Center>
                     </Box>
 
-                    <Stack sx={{ backgroundColor: 'white', height: '100%', padding: 10, width: '20%' }}>
+                    <Stack sx={{ backgroundColor: 'white', minHeight: 650, padding: 10, width: '20%' }}>
                         <Select
                             placeholder='Sección'
                             value={selectSection}
                             onChange={(value: any) => {
                                 setSelectSection(value)
+                                setBgColor('#484646')
                             }}
                             data={['Banner', 'Menú']}
                         />
@@ -122,7 +137,7 @@ export default function Images() {
                                 onChange={(value: any) => setSelectCategorie(value)}
                                 data={dataCategories}
                                 disabled={disabledCategories}
-                            /></>) : selectSection === 'Banner' ? (<ColorPicker format='hex' value={gbColor} onChange={setBgColor} />) : null}
+                            /></>) : selectSection === 'Banner' ? (<ColorPicker format='hex' value={bgColor} onChange={setBgColor} />) : null}
                     </Stack>
 
                 </Flex>
@@ -130,7 +145,16 @@ export default function Images() {
                     justify="center"
                     align="center"
                 >
-                    <Button sx={{ width: 250, alignContent: 'center' }}>Subir imagen</Button>
+                    <Button sx={(theme) => ({
+                        width: 250,
+                        color: 'black',
+                        alignContent: 'center',
+                        backgroundColor: '#47A025',
+                        '&:hover': {
+                            backgroundColor: theme.fn.darken('#47A025', 0.05),
+                        },
+                    })} leftIcon={<IconUpload />}
+                        onClick={() => handleUpload()}>Subir imagen</Button>
                 </Flex>
 
             </LayoutBody>

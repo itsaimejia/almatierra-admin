@@ -1,4 +1,4 @@
-import { ActionIcon, Alert, Box, Button, Flex, Grid, Group, Input, Modal, NativeSelect, Select, Stack, Text, Textarea, Notification } from '@mantine/core'
+import { ActionIcon, Alert, Box, Button, Flex, Grid, Group, Input, Modal, NativeSelect, Select, Stack, Text, Textarea, Notification, NumberInput } from '@mantine/core'
 import { IconAlertCircle, IconCheck, IconX } from '@tabler/icons'
 import React, { useEffect, useState } from 'react'
 import { getFirst3Letter, getFirstLetterEachWord, isNotEmpty, normilizeWord } from '../static/onStrings'
@@ -19,7 +19,7 @@ export const EditProductModal = ({ opened, setOpened, dataCymbal, reloadData }: 
     const [loading, setLoading] = useState(false)
 
     const [name, setName] = useState('')
-    const [price, setPrice] = useState('')
+    const [price, setPrice] = useState(0)
     const [description, setDescription] = useState('')
 
 
@@ -32,12 +32,12 @@ export const EditProductModal = ({ opened, setOpened, dataCymbal, reloadData }: 
 
     useEffect(() => {
         setName(dataCymbal.name)
-        setPrice(dataCymbal.price)
+        setPrice(parseInt(dataCymbal.price))
         setDescription(dataCymbal.description)
     }, [dataCymbal.description, dataCymbal.name, dataCymbal.price])
 
     const handleEditProduct = async () => {
-        const valid = isNotEmpty(name) && isNotEmpty(price)
+        const valid = isNotEmpty(name) && price != 0
         setShowErrorMessage(!valid)
         if (valid) {
             setShowNotification(true)
@@ -87,10 +87,12 @@ export const EditProductModal = ({ opened, setOpened, dataCymbal, reloadData }: 
                     />
                 </Grid.Col>
                 <Grid.Col span={4}>
-                    <Input
+                    <NumberInput
                         placeholder="Precio"
+                        hideControls
+                        min={0}
                         value={price}
-                        onChange={(event: any) => setPrice(event.currentTarget.value)}
+                        onChange={(val: any) => setPrice(val)}
                     />
                 </Grid.Col>
             </Grid>

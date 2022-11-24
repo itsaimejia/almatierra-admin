@@ -36,17 +36,15 @@ interface TableSortProps {
 }
 
 function filterData(data: ProductProps[], search: string) {
-    const query = search.toLowerCase().trim();
-    return data.filter((item) =>
-        keys(data[0]).some((key) => item[key].toLowerCase().includes(query))
-    );
+    const query = search.toLowerCase().trim()
+    return data.filter((item) => keys(data[0]).some((key) => item[key].toString().toLowerCase().includes(query)));
 }
 
 function sortData(data: ProductProps[], payload: { search: string }) {
     return filterData(
         [...data],
         payload.search
-    );
+    )
 }
 
 export function TableSortCymbals({ data }: TableSortProps) {
@@ -63,7 +61,7 @@ export function TableSortCymbals({ data }: TableSortProps) {
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = event.currentTarget;
         setSearch(value);
-        setSortedData(sortData(data, { search: value }));
+        setSortedData(sortData(currentDataCymbals, { search: value }));
     }
     async function reloadDataCymbals() {
         const querySnapshot = await getDocs(collection(db, "cymbals"))
@@ -84,6 +82,7 @@ export function TableSortCymbals({ data }: TableSortProps) {
         setSortedData(sortData(sortCymbals, { search }))
         setCurrentDataCymbals(sortCymbals)
     }
+
     const ths = (
         <tr>
             <th>ID</th>
@@ -193,7 +192,6 @@ export function TableSortCymbals({ data }: TableSortProps) {
                         ) : (
                             <tr>
                                 <td colSpan={8}>
-
                                 </td>
                             </tr>
                         )}
