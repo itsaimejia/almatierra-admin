@@ -1,11 +1,28 @@
+import { setDoc, doc } from "firebase/firestore";
 import { ref, uploadBytes } from "firebase/storage";
-import { storage } from "../../config/firebase";
+import { db, storage } from "../../config/firebase";
 
-interface ImageProps {
-    file: any
 
+export const uploadImage = async (file: any) => {
+    const storageRef = ref(storage, file.name)
+    return await uploadBytes(storageRef, file)
 }
-export const uploadImage = async ({ file }: ImageProps) => {
-    const storageRef = ref(storage, 'some-child');
-    return uploadBytes(storageRef, file)
+
+interface ImageDocProps {
+    id:string
+    alt: string,
+    categorie: string
+    menu: string
+    section: string
+    src: string
+}
+export const addImageDoc = async ({id, alt, categorie, menu, section, src }: ImageDocProps) => {
+    return await setDoc(doc(db, 'images', id), {
+        alt: alt,
+        menu: menu,
+        categorie: categorie,
+        section: section,
+        src: src
+    })
+
 }

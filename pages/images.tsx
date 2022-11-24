@@ -1,4 +1,4 @@
-import { BackgroundImage, Box, Button, Center, ColorPicker, Container, Flex, Grid, Group, NativeSelect, Select, Stack } from '@mantine/core'
+import { Alert, BackgroundImage, Box, Button, Center, ColorPicker, Container, Flex, Grid, Group, NativeSelect, Select, Stack, Notification } from '@mantine/core'
 import { useEffect, useRef, useState } from 'react';
 import React from 'react'
 import { Layout } from '../components/Layout'
@@ -6,8 +6,9 @@ import { LayoutBody } from '../components/LayoutBody'
 import { Text, Image, SimpleGrid } from '@mantine/core';
 import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from '@mantine/dropzone';
 import { _BackgroundImage } from '@mantine/core/lib/BackgroundImage/BackgroundImage';
-import { IconPlus, IconUpload } from '@tabler/icons';
-import { normilizeWord, isNotEmpty } from '../static/onStrings';
+import { IconAlertCircle, IconPlus, IconUpload } from '@tabler/icons';
+import { normilizeWord, isNotEmpty, normilizeIdmage } from '../static/onStrings';
+import { uploadImage, addImageDoc } from './api/images';
 
 export default function Images() {
     const [files, setFiles] = useState<FileWithPath[]>([]);
@@ -18,7 +19,8 @@ export default function Images() {
     const [selectSection, setSelectSection] = useState('')
     const [disabledCategories, setDisabledCategories] = useState(true)
     const [selectCategorie, setSelectCategorie] = useState('')
-    const [bgColor, setBgColor] = useState('#484646');
+    const [bgColor, setBgColor] = useState('#484646')
+    const [showErrorMessage, setShowErrorMessage] = useState(false)
 
 
     useEffect(() => {
@@ -52,25 +54,78 @@ export default function Images() {
         );
     })
 
-    const handleUpload = () => {
+    const clearSelection = () => {
+        setSelectTitleMenu('')
+        setSelectCategorie('')
+        setSelectSection('')
+    }
+    const handleUpload = async () => {
         const fileImage = files[0]
         if (fileImage != undefined) {
-
             if (selectSection === 'Banner') {
-                console.log(selectSection, fileImage, bgColor)
-            } else if (selectSection === 'Menu') {
-                const valid = isNotEmpty(selectTitleMenu) && isNotEmpty(selectCategorie)
-                if (valid) {
+                await uploadImage(fileImage)
+                    .then(async (r: any) => {
+                        const { metadata } = r
+                        const { bucket, fullPath, md5Hash } = metadata
+                        const url = `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${fullPath}`
+                        const res = await fetch(url)
+                        let imageData = await res.json()
+                        const { downloadTokens } = imageData
+                        const urlImage = `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${fullPath}?alt=media&token=${downloadTokens}`
+                        console.log(urlImage)
+                        await addImageDoc({
+                            id: normilizeIdmage(md5Hash),
+                            alt: fullPath,
+                            categorie: '-',
+                            menu: '-',
+                            section: normilizeWord(selectSection),
+                            src: urlImage
+                        }).then(() => {
+                            clearSelection()
+                        })
+                    })
 
+            } else if (selectSection === 'Menú') {
+                const valid = isNotEmpty(selectTitleMenu) && isNotEmpty(selectCategorie)
+                setShowErrorMessage(!valid)
+                if (valid) {
+                    await uploadImage(fileImage)
+                        .then(async (r: any) => {
+                            const { metadata } = r
+                            const { bucket, fullPath, md5Hash } = metadata
+                            const url = `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${fullPath}`
+                            const res = await fetch(url)
+                            let imageData = await res.json()
+                            const { downloadTokens } = imageData
+                            const urlImage = `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${fullPath}?alt=media&token=${downloadTokens}`
+                            console.log(urlImage)
+                            await addImageDoc({
+                                id: normilizeIdmage(md5Hash),
+                                alt: fullPath,
+                                categorie: selectCategorie,
+                                menu: normilizeWord(selectTitleMenu),
+                                section: normilizeWord(selectSection),
+                                src: urlImage
+                            }).then(() => {
+                                clearSelection()
+                            })
+                        })
                 }
+            } else {
+                setShowErrorMessage(true)
             }
         }
+
     }
     return (
         <Layout>
             <LayoutBody titlePage='Imagenes'>
                 <Dropzone
-                    accept={IMAGE_MIME_TYPE} onDrop={setFiles}
+                    accept={IMAGE_MIME_TYPE} onDrop={(d: any) => {
+                        setFiles(d)
+                        clearSelection()
+                    }}
+
                     sx={(theme) => ({
                         height: 40,
                         width: 210,
@@ -117,6 +172,7 @@ export default function Images() {
                             onChange={(value: any) => {
                                 setSelectSection(value)
                                 setBgColor('#484646')
+                                setShowErrorMessage(false)
                             }}
                             data={['Banner', 'Menú']}
                         />
@@ -128,16 +184,23 @@ export default function Images() {
                                     setSelectTitleMenu(value)
                                     setSelectCategorie('')
                                     fillCategories(value)
+                                    setShowErrorMessage(false)
                                 }}
                                 data={titlesMenus}
                             />
                             <Select
                                 placeholder='Categoría'
                                 value={selectCategorie}
-                                onChange={(value: any) => setSelectCategorie(value)}
+                                onChange={(value: any) => {
+                                    setSelectCategorie(value)
+                                    setShowErrorMessage(false)
+                                }}
                                 data={dataCategories}
                                 disabled={disabledCategories}
                             /></>) : selectSection === 'Banner' ? (<ColorPicker format='hex' value={bgColor} onChange={setBgColor} />) : null}
+                        {showErrorMessage ? (<Alert icon={<IconAlertCircle size={16} />} title="Faltan datos" color="red" radius="md" variant="outline">
+                            Falta seleccionar algún campo
+                        </Alert>) : null}
                     </Stack>
 
                 </Flex>
@@ -156,7 +219,13 @@ export default function Images() {
                     })} leftIcon={<IconUpload />}
                         onClick={() => handleUpload()}>Subir imagen</Button>
                 </Flex>
-
+                <Notification
+                    loading
+                    title="Uploading data to the server"
+                    disallowClose
+                >
+                    Please wait until data is uploaded, you cannot close this notification yet
+                </Notification>
             </LayoutBody>
         </Layout>
     )
