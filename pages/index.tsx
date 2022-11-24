@@ -5,7 +5,10 @@ import { LayoutBody } from '../components/LayoutBody'
 import { TableSortCymbals } from '../components/TableSortCymbals'
 import { db } from '../config/firebase'
 
-export default function Home({ dataCymbals }: { dataCymbals: any }) {
+interface HomeProps {
+  dataCymbals?: any
+}
+export default function Home({ dataCymbals }: HomeProps) {
   console.log('render')
   return (<Layout>
     <LayoutBody titlePage={'Menú'}>
