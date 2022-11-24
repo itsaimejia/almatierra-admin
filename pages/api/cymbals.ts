@@ -8,7 +8,7 @@ interface ProductProps {
     categorie: string
     name: string
     description: string
-    price: string
+    price: number
 }
 
 
