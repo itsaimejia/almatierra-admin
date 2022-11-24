@@ -1,6 +1,7 @@
 import { setDoc, doc } from "firebase/firestore";
 import { ref, uploadBytes } from "firebase/storage";
 import { db, storage } from "../../config/firebase";
+import { normilizeIdmage } from "../../static/onStrings";
 
 
 export const uploadImage = async (file: any) => {
@@ -9,14 +10,14 @@ export const uploadImage = async (file: any) => {
 }
 
 interface ImageDocProps {
-    id:string
+    id: string
     alt: string,
     categorie: string
     menu: string
     section: string
     src: string
 }
-export const addImageDoc = async ({id, alt, categorie, menu, section, src }: ImageDocProps) => {
+export const addImageDoc = async ({ id, alt, categorie, menu, section, src }: ImageDocProps) => {
     return await setDoc(doc(db, 'images', id), {
         alt: alt,
         menu: menu,
@@ -26,3 +27,4 @@ export const addImageDoc = async ({id, alt, categorie, menu, section, src }: Ima
     })
 
 }
+
