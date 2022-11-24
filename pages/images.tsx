@@ -6,9 +6,12 @@ import { LayoutBody } from '../components/LayoutBody'
 import { Text, Image, SimpleGrid } from '@mantine/core';
 import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from '@mantine/dropzone';
 import { _BackgroundImage } from '@mantine/core/lib/BackgroundImage/BackgroundImage';
-import { IconAlertCircle, IconPlus, IconUpload } from '@tabler/icons';
+import { IconAlertCircle, IconCheck, IconPlus, IconUpload } from '@tabler/icons';
 import { normilizeWord, isNotEmpty, normilizeIdmage } from '../static/onStrings';
 import { uploadImage, addImageDoc } from './api/images';
+import { showNotification} from '@mantine/notifications';
+import { useRouter } from 'next/router';
+import { completeNavigationProgress, NavigationProgress, setNavigationProgress, startNavigationProgress } from '@mantine/nprogress';
 
 export default function Images() {
     const [files, setFiles] = useState<FileWithPath[]>([]);
@@ -22,6 +25,12 @@ export default function Images() {
     const [bgColor, setBgColor] = useState('#484646')
     const [showErrorMessage, setShowErrorMessage] = useState(false)
 
+    const router = useRouter();
+    
+    const setStateImage = () => {
+        startNavigationProgress()
+        
+    }
 
     useEffect(() => {
         const fetchMenus = async () => {
@@ -201,6 +210,15 @@ export default function Images() {
                         {showErrorMessage ? (<Alert icon={<IconAlertCircle size={16} />} title="Faltan datos" color="red" radius="md" variant="outline">
                             Falta seleccionar algún campo
                         </Alert>) : null}
+                        <NavigationProgress autoReset={true} />
+                        <Button
+                            variant="outline"
+                            onClick={() => {
+                                setNavigationProgress(50)
+                            }}
+                          >
+                            Show update notification
+                        </Button>
                     </Stack>
 
                 </Flex>
