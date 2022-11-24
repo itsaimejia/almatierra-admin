@@ -22,6 +22,7 @@ import { db } from '../config/firebase';
 import { DeleteProductModal } from './DeleteProductModal';
 
 
+
 interface ProductProps {
     id: string
     menu: string
@@ -179,7 +180,7 @@ export function TableSortCymbals({ data }: TableSortProps) {
                         onChange={handleSearchChange}
                     />
                 </Flex>
-                <Button disabled >Editar menus</Button>
+                <Button disabled>Editar menus</Button>
             </Group>
             <Paper shadow="lg" p="xs">
                 <Table sx={{ backgroundColor: 'white', }} captionSide="bottom" striped withColumnBorders>

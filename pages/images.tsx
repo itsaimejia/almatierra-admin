@@ -9,9 +9,40 @@ import { _BackgroundImage } from '@mantine/core/lib/BackgroundImage/BackgroundIm
 import { IconAlertCircle, IconCheck, IconPlus, IconUpload } from '@tabler/icons';
 import { normilizeWord, isNotEmpty, normilizeIdmage } from '../static/onStrings';
 import { uploadImage, addImageDoc } from './api/images';
-import { showNotification} from '@mantine/notifications';
+import { showNotification, updateNotification } from '@mantine/notifications';
 import { useRouter } from 'next/router';
-import { completeNavigationProgress, NavigationProgress, setNavigationProgress, startNavigationProgress } from '@mantine/nprogress';
+
+
+
+const notificationUploadStart = () =>
+    showNotification({
+        id: 'uploadimg',
+        loading: true,
+        title: 'Cargando imagen',
+        message: 'Se te indicara al finalizar la carga',
+        autoClose: false,
+        disallowClose: true,
+    })
+
+const notificationUploadComplete = () =>
+    updateNotification({
+        id: 'uploadimg',
+        color: 'teal',
+        title: 'Imagen cargada correctamente',
+        message: 'La imagen se cargo satifactoriamente \nPuedes cerrar esta alerta o desaparecerá en 2 segundos',
+        icon: <IconCheck color='red' size={16} />,
+        autoClose: 1500,
+    })
+
+const notificationUploadError = (error: string) =>
+    updateNotification({
+        id: 'uploadimg',
+        color: 'red',
+        title: 'Ocurrió un error',
+        message: error,
+        icon: <IconAlertCircle size={16} />,
+        autoClose: 1500,
+    })
 
 export default function Images() {
     const [files, setFiles] = useState<FileWithPath[]>([]);
@@ -20,17 +51,11 @@ export default function Images() {
     const [selectTitleMenu, setSelectTitleMenu] = useState('')
     const [dataCategories, setDataCategories] = useState([])
     const [selectSection, setSelectSection] = useState('')
-    const [disabledCategories, setDisabledCategories] = useState(true)
     const [selectCategorie, setSelectCategorie] = useState('')
     const [bgColor, setBgColor] = useState('#484646')
     const [showErrorMessage, setShowErrorMessage] = useState(false)
-
-    const router = useRouter();
-    
-    const setStateImage = () => {
-        startNavigationProgress()
-        
-    }
+    const [disabled, setDisabled] = useState(false)
+    const [previews, setPreviews] = useState<JSX.Element[]>([])
 
     useEffect(() => {
         const fetchMenus = async () => {
@@ -47,22 +72,25 @@ export default function Images() {
             if (normilizeWord(d.title) === normilizeWord(title))
                 setDataCategories(d.categories)
         })
-        setDisabledCategories(false)
     }
 
-    const previews = files.map((file, index) => {
-        const imageUrl = URL.createObjectURL(file);
-        return (
-            <Image
-                alt=''
-                key={index}
-                src={imageUrl}
-                height={600}
-                imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
-            />
-        );
-    })
+    const getPreviewImg = (f: any) => {
+        const preview = f.map((file: any, index: number) => {
+            const imageUrl = URL.createObjectURL(file);
+            return (
+                <Image
+                    alt=''
+                    key={index}
+                    src={imageUrl}
+                    height={600}
+                    imageProps={{ onLoad: () => URL.revokeObjectURL(imageUrl) }}
+                />
+            )
+        })
+        setPreviews(preview)
+    }
 
+    console.log(previews)
     const clearSelection = () => {
         setSelectTitleMenu('')
         setSelectCategorie('')
@@ -71,7 +99,9 @@ export default function Images() {
     const handleUpload = async () => {
         const fileImage = files[0]
         if (fileImage != undefined) {
+            setDisabled(true)
             if (selectSection === 'Banner') {
+                notificationUploadStart()
                 await uploadImage(fileImage)
                     .then(async (r: any) => {
                         const { metadata } = r
@@ -81,7 +111,6 @@ export default function Images() {
                         let imageData = await res.json()
                         const { downloadTokens } = imageData
                         const urlImage = `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${fullPath}?alt=media&token=${downloadTokens}`
-                        console.log(urlImage)
                         await addImageDoc({
                             id: normilizeIdmage(md5Hash),
                             alt: fullPath,
@@ -91,23 +120,29 @@ export default function Images() {
                             src: urlImage
                         }).then(() => {
                             clearSelection()
+                            setPreviews([])
+                            notificationUploadComplete()
+                        }).catch((e) => {
+                            notificationUploadError(e)
                         })
+                    }).catch((e) => {
+                        notificationUploadError(e)
                     })
 
             } else if (selectSection === 'Menú') {
                 const valid = isNotEmpty(selectTitleMenu) && isNotEmpty(selectCategorie)
                 setShowErrorMessage(!valid)
                 if (valid) {
+                    notificationUploadStart()
                     await uploadImage(fileImage)
                         .then(async (r: any) => {
                             const { metadata } = r
-                            const { bucket, fullPath, md5Hash } = metadata
+                            const { bucket, fullPath } = metadata
                             const url = `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${fullPath}`
                             const res = await fetch(url)
                             let imageData = await res.json()
-                            const { downloadTokens } = imageData
+                            const { md5Hash, downloadTokens } = imageData
                             const urlImage = `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${fullPath}?alt=media&token=${downloadTokens}`
-                            console.log(urlImage)
                             await addImageDoc({
                                 id: normilizeIdmage(md5Hash),
                                 alt: fullPath,
@@ -117,12 +152,19 @@ export default function Images() {
                                 src: urlImage
                             }).then(() => {
                                 clearSelection()
+                                setPreviews([])
+                                notificationUploadComplete()
+                            }).catch((e) => {
+                                notificationUploadError(e)
                             })
+                        }).catch((e) => {
+                            notificationUploadError(e)
                         })
                 }
             } else {
                 setShowErrorMessage(true)
             }
+            setDisabled(false)
         }
 
     }
@@ -132,9 +174,10 @@ export default function Images() {
                 <Dropzone
                     accept={IMAGE_MIME_TYPE} onDrop={(d: any) => {
                         setFiles(d)
+                        getPreviewImg(d)
                         clearSelection()
                     }}
-
+                    disabled={disabled}
                     sx={(theme) => ({
                         height: 40,
                         width: 210,
@@ -176,6 +219,7 @@ export default function Images() {
 
                     <Stack sx={{ backgroundColor: 'white', minHeight: 650, padding: 10, width: '20%' }}>
                         <Select
+                            disabled={disabled}
                             placeholder='Sección'
                             value={selectSection}
                             onChange={(value: any) => {
@@ -187,6 +231,7 @@ export default function Images() {
                         />
                         {selectSection == 'Menú' ? (<>
                             <Select
+                                disabled={disabled}
                                 placeholder='Menú'
                                 value={selectTitleMenu}
                                 onChange={(value: any) => {
@@ -205,20 +250,11 @@ export default function Images() {
                                     setShowErrorMessage(false)
                                 }}
                                 data={dataCategories}
-                                disabled={disabledCategories}
+                                disabled={disabled}
                             /></>) : selectSection === 'Banner' ? (<ColorPicker format='hex' value={bgColor} onChange={setBgColor} />) : null}
                         {showErrorMessage ? (<Alert icon={<IconAlertCircle size={16} />} title="Faltan datos" color="red" radius="md" variant="outline">
                             Falta seleccionar algún campo
                         </Alert>) : null}
-                        <NavigationProgress autoReset={true} />
-                        <Button
-                            variant="outline"
-                            onClick={() => {
-                                setNavigationProgress(50)
-                            }}
-                          >
-                            Show update notification
-                        </Button>
                     </Stack>
 
                 </Flex>
@@ -226,24 +262,19 @@ export default function Images() {
                     justify="center"
                     align="center"
                 >
-                    <Button sx={(theme) => ({
-                        width: 250,
-                        color: 'black',
-                        alignContent: 'center',
-                        backgroundColor: '#47A025',
-                        '&:hover': {
-                            backgroundColor: theme.fn.darken('#47A025', 0.05),
-                        },
-                    })} leftIcon={<IconUpload />}
+                    <Button
+                        disabled={disabled}
+                        sx={(theme) => ({
+                            width: 250,
+                            color: 'black',
+                            alignContent: 'center',
+                            backgroundColor: '#47A025',
+                            '&:hover': {
+                                backgroundColor: theme.fn.darken('#47A025', 0.05),
+                            },
+                        })} leftIcon={<IconUpload />}
                         onClick={() => handleUpload()}>Subir imagen</Button>
                 </Flex>
-                <Notification
-                    loading
-                    title="Uploading data to the server"
-                    disallowClose
-                >
-                    Please wait until data is uploaded, you cannot close this notification yet
-                </Notification>
             </LayoutBody>
         </Layout>
     )
