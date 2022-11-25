@@ -20,6 +20,7 @@ import { EditProductModal } from './EditProductModal';
 import { getDocs, collection } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { DeleteProductModal } from './DeleteProductModal';
+import { addImagesData } from '../pages/api/images';
 
 
 
@@ -180,7 +181,7 @@ export function TableSortCymbals({ data }: TableSortProps) {
                         onChange={handleSearchChange}
                     />
                 </Flex>
-                <Button disabled>Editar menus</Button>
+                <Button onClick={() => addAll()}>Editar menus</Button>
             </Group>
             <Paper shadow="lg" p="xs">
                 <Table sx={{ backgroundColor: 'white', }} captionSide="bottom" striped withColumnBorders>
