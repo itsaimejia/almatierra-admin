@@ -13,14 +13,13 @@ import {
 import { keys } from '@mantine/utils';
 import { IconSearch, IconEdit, IconPower, IconTrash, IconPlus } from '@tabler/icons';
 import { StatusFlag } from './StatusFlag';
-import { addAll, turnOnOffProduct } from '../pages/api/cymbals';
+import { turnOnOffProduct } from '../pages/api/cymbals';
 import { NewProductModal } from './NewProductModal';
 import CymbalDescriptionModal from './CymbalDescriptionModal';
 import { EditProductModal } from './EditProductModal';
 import { getDocs, collection } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { DeleteProductModal } from './DeleteProductModal';
-import { addImagesData } from '../pages/api/images';
 
 
 
@@ -181,7 +180,7 @@ export function TableSortCymbals({ data }: TableSortProps) {
                         onChange={handleSearchChange}
                     />
                 </Flex>
-                <Button onClick={() => addAll()}>Editar menus</Button>
+                <Button disabled >Editar menus</Button>
             </Group>
             <Paper shadow="lg" p="xs">
                 <Table sx={{ backgroundColor: 'white', }} captionSide="bottom" striped withColumnBorders>

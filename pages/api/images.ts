@@ -28,23 +28,23 @@ export const addImageDoc = async ({ id, alt, categorie, menu, section, src }: Im
 
 }
 
-export const addImagesData = async () => {
-    const url = 'https://almatierra-7796b-default-rtdb.firebaseio.com/images.json'
-    const r = await fetch(url)
-    let json = await r.json()
-    let images = json.filter((e: any) => e !== null)
-    images.map(async (m: any) => {
-        const url = m.src.split('?')[0]
-        const r = await fetch(url)
-        let json = await r.json()
-        const { md5Hash } = json
-        await addImageDoc({
-            id: normilizeIdmage(md5Hash),
-            alt: m.alt,
-            categorie: m.categorie,
-            menu: m.menu,
-            section: m.section,
-            src: m.src
-        })
-    })
-}
+// export const addImagesData = async () => {
+//     const url = 'https://almatierra-7796b-default-rtdb.firebaseio.com/images.json'
+//     const r = await fetch(url)
+//     let json = await r.json()
+//     let images = json.filter((e: any) => e !== null)
+//     images.map(async (m: any) => {
+//         const url = m.src.split('?')[0]
+//         const r = await fetch(url)
+//         let json = await r.json()
+//         const { md5Hash } = json
+//         await addImageDoc({
+//             id: normilizeIdmage(md5Hash),
+//             alt: m.alt,
+//             categorie: m.categorie,
+//             menu: m.menu,
+//             section: m.section,
+//             src: m.src
+//         })
+//     })
+// }
