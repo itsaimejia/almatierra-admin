@@ -1,8 +1,8 @@
 import { ActionIcon, Alert, Box, Button, Flex, Grid, Group, Input, Modal, NativeSelect, Select, Stack, Text, Textarea, Notification, NumberInput } from '@mantine/core'
 import { IconAlertCircle, IconCheck, IconX } from '@tabler/icons'
 import React, { useEffect, useState } from 'react'
-import { getFirst3Letter, getFirstLetterEachWord, isNotEmpty, normilizeWord } from '../static/onStrings'
-import { addProduct } from '../pages/api/cymbals';
+import { getFirst3Letter, getFirstLetterEachWord, isNotEmpty, normilizeWord, capitalizedEachWord } from '../static/onStrings';
+import { addProductDoc } from '../pages/api/cymbals';
 import { FormBaseModal } from './FormBaseModal';
 
 
@@ -24,7 +24,7 @@ export const NewProductModal = ({ opened, setOpened, dataCymbals, reloadData }: 
     const [loading, setLoading] = useState(false)
 
     const [name, setName] = useState('')
-    const [price, setPrice] = useState(0)
+    const [price, setPrice] = useState('')
     const [description, setDescription] = useState('')
 
     useEffect(() => {
@@ -50,7 +50,7 @@ export const NewProductModal = ({ opened, setOpened, dataCymbals, reloadData }: 
         setSelectTitleMenu('')
         setSelectCategorie('')
         setName('')
-        setPrice(0)
+        setPrice('')
         setDescription('')
         setDisabledCategories(true)
         setShowErrorMessage(false)
@@ -59,7 +59,7 @@ export const NewProductModal = ({ opened, setOpened, dataCymbals, reloadData }: 
 
     const handleNewProduct = async () => {
         const valid = isNotEmpty(selectTitleMenu) && isNotEmpty(selectCategorie)
-            && isNotEmpty(name) && price != 0
+            && isNotEmpty(name) && isNotEmpty(price)
         setShowErrorMessage(!valid)
         if (valid) {
             setShowNotification(true)
@@ -73,13 +73,13 @@ export const NewProductModal = ({ opened, setOpened, dataCymbals, reloadData }: 
             }
             const formatNumber = (n: any) => n < 10 ? '000' + n : n < 100 ? '00' + n : n < 1000 ? '0' + n : n
             const currentId = getFirst3Letter(selectTitleMenu) + getFirstLetterEachWord(selectCategorie) + formatNumber(idNumber)
-            addProduct({
+            addProductDoc({
                 id: currentId,
                 menu: selectTitleMenu,
                 categorie: selectCategorie,
                 description: description,
                 name: name,
-                price: price
+                price: parseInt(price)
             }).then((v) => {
                 setLoading(false)
                 setTimeout(() => closeModal(), 500)
@@ -113,16 +113,21 @@ export const NewProductModal = ({ opened, setOpened, dataCymbals, reloadData }: 
                     <Input
                         placeholder="Nombre producto"
                         value={name}
-                        onChange={(event: any) => setName(event.currentTarget.value)}
+                        onChange={(event: any) => setName(capitalizedEachWord(event.currentTarget.value))}
                     />
                 </Grid.Col>
                 <Grid.Col span={4}>
-                    <NumberInput
+                    <Input
                         placeholder="Precio"
-                        hideControls
-                        min={0}
                         value={price}
-                        onChange={(val: any) => setPrice(val)}
+                        onChange={(event: any) => {
+                            if (!(/^\d+$/g.test(event.currentTarget.value)))
+                                setPrice(event.currentTarget.value.substring(0, event.currentTarget.value.length - 1))
+                            else if (event.currentTarget.value.length >= 10)
+                                setPrice(event.currentTarget.value.substring(0, event.currentTarget.value.length - 1))
+                            else
+                                setPrice(event.currentTarget.value)
+                        }}
                     />
                 </Grid.Col>
             </Grid>

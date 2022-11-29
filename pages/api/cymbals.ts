@@ -12,7 +12,7 @@ interface ProductProps {
 }
 
 
-export const addProduct = async ({ id, menu, categorie, description, name, price }: ProductProps) => {
+export const addProductDoc = async ({ id, menu, categorie, description, name, price }: ProductProps) => {
     return await setDoc(doc(db, 'cymbals', id), {
         menu: menu,
         categorie: categorie,
@@ -23,7 +23,7 @@ export const addProduct = async ({ id, menu, categorie, description, name, price
     })
 }
 
-export const editProduct = async ({ id, description, name, price }: ProductProps) => {
+export const editProductDoc = async ({ id, description, name, price }: ProductProps) => {
     return await updateDoc(doc(db, 'cymbals', id), {
         name: name,
         description: description,
@@ -32,7 +32,7 @@ export const editProduct = async ({ id, description, name, price }: ProductProps
     })
 }
 
-export const deleteProduct = async (id: any) => {
+export const deleteProductDoc = async (id: any) => {
     return await deleteDoc(doc(db, 'cymbals', id))
 }
 

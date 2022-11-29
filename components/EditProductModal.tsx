@@ -1,8 +1,8 @@
 import { ActionIcon, Alert, Box, Button, Flex, Grid, Group, Input, Modal, NativeSelect, Select, Stack, Text, Textarea, Notification, NumberInput } from '@mantine/core'
 import { IconAlertCircle, IconCheck, IconX } from '@tabler/icons'
 import React, { useEffect, useState } from 'react'
-import { getFirst3Letter, getFirstLetterEachWord, isNotEmpty, normilizeWord } from '../static/onStrings'
-import { addProduct, editProduct } from '../pages/api/cymbals';
+import { getFirst3Letter, getFirstLetterEachWord, isNotEmpty, normilizeWord, capitalizedEachWord } from '../static/onStrings';
+import { addProductDoc, editProductDoc } from '../pages/api/cymbals';
 import { FormBaseModal } from './FormBaseModal';
 
 
@@ -19,7 +19,7 @@ export const EditProductModal = ({ opened, setOpened, dataCymbal, reloadData }: 
     const [loading, setLoading] = useState(false)
 
     const [name, setName] = useState('')
-    const [price, setPrice] = useState(0)
+    const [price, setPrice] = useState('')
     const [description, setDescription] = useState('')
 
 
@@ -32,24 +32,24 @@ export const EditProductModal = ({ opened, setOpened, dataCymbal, reloadData }: 
 
     useEffect(() => {
         setName(dataCymbal.name)
-        setPrice(parseInt(dataCymbal.price))
+        setPrice(dataCymbal.price)
         setDescription(dataCymbal.description)
     }, [dataCymbal.description, dataCymbal.name, dataCymbal.price])
 
     const handleEditProduct = async () => {
-        const valid = isNotEmpty(name) && price != 0
+        const valid = isNotEmpty(name) && isNotEmpty(price)
         setShowErrorMessage(!valid)
         if (valid) {
             setShowNotification(true)
             setLoading(true)
 
-            editProduct({
+            editProductDoc({
                 id: dataCymbal.id,
                 menu: dataCymbal.menu,
                 categorie: dataCymbal.categorie,
                 description: description,
                 name: name,
-                price: price
+                price: parseInt(price)
             }).then((v) => {
                 setLoading(false)
                 setTimeout(() => closeModal(), 500)
@@ -82,17 +82,22 @@ export const EditProductModal = ({ opened, setOpened, dataCymbal, reloadData }: 
                     <Input
                         placeholder="Nombre producto"
                         value={name}
-                        onChange={(event: any) => setName(event.currentTarget.value)}
+                        onChange={(event: any) => setName(capitalizedEachWord(event.currentTarget.value))}
 
                     />
                 </Grid.Col>
                 <Grid.Col span={4}>
-                    <NumberInput
+                    <Input
                         placeholder="Precio"
-                        hideControls
-                        min={0}
                         value={price}
-                        onChange={(val: any) => setPrice(val)}
+                        onChange={(event: any) => {
+                            if (!(/^\d+$/g.test(event.currentTarget.value)))
+                                setPrice(event.currentTarget.value.substring(0, event.currentTarget.value.length - 1))
+                            else if (event.currentTarget.value.length >= 10)
+                                setPrice(event.currentTarget.value.substring(0, event.currentTarget.value.length - 1))
+                            else
+                                setPrice(event.currentTarget.value)
+                        }}
                     />
                 </Grid.Col>
             </Grid>

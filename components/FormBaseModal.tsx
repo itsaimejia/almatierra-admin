@@ -2,7 +2,7 @@ import { ActionIcon, Alert, Box, Button, Flex, Grid, Group, Input, Modal, Native
 import { IconAlertCircle, IconCheck, IconX } from '@tabler/icons'
 import React, { useEffect, useState } from 'react'
 import { getFirst3Letter, getFirstLetterEachWord, isNotEmpty, normilizeWord } from '../static/onStrings'
-import { addProduct } from '../pages/api/cymbals';
+import { addProductDoc } from '../pages/api/cymbals';
 
 
 interface NewProductModalProps {
@@ -10,8 +10,9 @@ interface NewProductModalProps {
     title: string
     opened: boolean
     closeModal(): void
+    size?: any
 }
-export const FormBaseModal = ({ children, opened, title, closeModal }: NewProductModalProps) => {
+export const FormBaseModal = ({ children, opened, title, size, closeModal }: NewProductModalProps) => {
     return (
         <>
             <Modal
@@ -19,7 +20,7 @@ export const FormBaseModal = ({ children, opened, title, closeModal }: NewProduc
                 padding={0}
                 withCloseButton={false}
                 centered
-                size="sm"
+                size={size ?? "sm"}
                 opened={opened}
                 onClose={() => closeModal()}>
                 <Stack>

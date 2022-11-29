@@ -2,7 +2,7 @@ import { Alert, Button, Flex, Grid, Group, Input, Text, Textarea, Notification, 
 import { IconAlertCircle, IconCheck } from '@tabler/icons'
 import React, { useEffect, useState } from 'react'
 import { isNotEmpty } from '../static/onStrings'
-import { editProduct, deleteProduct } from '../pages/api/cymbals';
+import { editProductDoc, deleteProductDoc } from '../pages/api/cymbals';
 import { FormBaseModal } from './FormBaseModal';
 
 interface ProductModalProps {
@@ -41,7 +41,7 @@ export const DeleteProductModal = ({ opened, setOpened, dataCymbal, reloadData }
         if (valid) {
             setShowNotification(true)
             setLoading(true)
-            deleteProduct(inputId).then((v) => {
+            deleteProductDoc(inputId).then((v) => {
                 setLoading(false)
                 setTimeout(() => closeModal(), 500)
                 reloadData()
