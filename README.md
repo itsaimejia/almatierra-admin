@@ -14,7 +14,7 @@ El [menú digital](https://github.com/itsaimejia/almatierra-menu/tree/main "men�
 ## Base de datos
 Para la base de datos se uso [Firebase](https://firebase.google.com "Firebase") de Google que es una plataforma la cual nos otorga el servicio de almacenamiento en la nube, al pertenecer a Google podemos tener la tranquilidad que los datos están seguros. Cuenta con una cuota diaria gratuita, lo que nos permite correr pruebas de una manera sencilla sin hacer gasto. 
 
-Entre los servicios que ofrece esta plataforma cuenta con Firestore Database, en este se crearon todas las colecciones necesarias para la administración de los datos. Las colecciones creadas son **cymbals** , ** menus** e **images**.
+Entre los servicios que ofrece esta plataforma cuenta con Firestore Database, en este se crearon todas las colecciones necesarias para la administración de los datos. Las colecciones creadas son **cymbals** , **menus** e **images**.
 
 ![Menu](https://imagizer.imageshack.com/v2/1280x1024q90/922/TdKK0m.png "Menu")
 >**Cymbals** contiene los registros de los Productos, cada registro está conformado por:
