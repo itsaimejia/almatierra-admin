@@ -79,7 +79,7 @@ El lenguaje que se utilizó para este proyecto fue TypeScript, ya que es un leng
 
 ![Menu](https://imagizer.imageshack.com/v2/1280x1024q90/923/pOqmTc.png)
 
->**Al entrar por primera vez tenemos la primera pantalla que es un login el cual te pide ingresar tus credenciales y posteriormente podras iniciar sesion. De igual forma se manejaron validaciones en caso de introducirlas incorrectamente tanto el usuario y contraseña. **
+>**Al entrar por primera vez tenemos la primera pantalla que es un login el cual te pide ingresar tus credenciales y posteriormente podras iniciar sesion. De igual forma se manejaron validaciones en caso de introducirlas incorrectamente tanto el usuario y contraseña.**
 
 ![Menu](https://imagizer.imageshack.com/v2/1280x1024q90/923/VXjJEJ.png)
 
