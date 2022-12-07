@@ -1,4 +1,4 @@
-import { Alert, BackgroundImage, Box, Button, Center, ColorPicker, Container, Flex, Grid, Group, NativeSelect, Select, Stack, Notification } from '@mantine/core'
+import { Alert, BackgroundImage, Box, Button, Center, ColorPicker, Container, Flex, Grid, Group, NativeSelect, Select, Stack, Notification, Title, Divider } from '@mantine/core'
 import { useEffect, useRef, useState } from 'react';
 import React from 'react'
 import { Layout } from '../components/Layout'
@@ -218,6 +218,8 @@ export default function Images() {
                     </Box>
 
                     <Stack sx={{ backgroundColor: 'white', minHeight: 650, padding: 10, width: '20%' }}>
+                        <Title order={3}>Sección</Title>
+                        <Divider />
                         <Select
                             disabled={disabled}
                             placeholder='Sección'
@@ -251,10 +253,12 @@ export default function Images() {
                                 }}
                                 data={dataCategories}
                                 disabled={disabled}
-                            /></>) : selectSection === 'Banner' ? (<ColorPicker format='hex' value={bgColor} onChange={setBgColor} />) : null}
-                        {showErrorMessage ? (<Alert icon={<IconAlertCircle size={16} />} title="Faltan datos" color="red" radius="md" variant="outline">
-                            Falta seleccionar algún campo
-                        </Alert>) : null}
+                            /></>) :
+                            //     selectSection === 'Banner' ? (<ColorPicker format='hex' value={bgColor} onChange={setBgColor} />) : null}
+                            // {showErrorMessage ? (<Alert icon={<IconAlertCircle size={16} />} title="Faltan datos" color="red" radius="md" variant="outline">
+                            //     Falta seleccionar algún campo
+                            // </Alert>) : 
+                            null}
                     </Stack>
 
                 </Flex>
