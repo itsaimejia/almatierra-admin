@@ -54,9 +54,10 @@ const SignIn = () => {
         },
     })
 
-    const keyDownHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    const keyDownHandler = async (event: React.KeyboardEvent<HTMLInputElement>) => {
         if (event.code === "Enter" || event.code === "NumpadEnter") {
-            handleLogin()
+            await handleLogin()
+            location.reload()
         }
     }
     const handleLogin = async () => {
@@ -108,7 +109,7 @@ const SignIn = () => {
                         </Text></Button>
                         {error.includes('Contraseña') ? (<Notification title="Olvidaste tu contraseña?" onClose={() => setResetPassword(false)}>
                             <Button variant="subtle" radius="xs" size="xs" disabled compact onClick={() => setResetPassword(true)}>
-                                Recuperar contraseña
+                                Enviar correo para recuperar contraseña
                             </Button>
                         </Notification>) : null}
                         <Divider />
